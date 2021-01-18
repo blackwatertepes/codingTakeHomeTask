@@ -13,7 +13,7 @@ const fetchSignedURLWithSigner = async (URLExclSig) => {
 
     return signedURL;
   } catch (error) {
-    await logError(
+    logError(
       `Error handleFetchLeads / handleFetchPosts - fetchSignedURLWithSigner ${error.stack}`
     );
     return "";
@@ -34,11 +34,11 @@ const fetchAllSignedURLsWithSigner = async (URLsExclSig) => {
     return signedURLs;
   } catch (error) {
     if (error.code === "ERR_CONNECTION_REFUSED") {
-      await logError(
+      logError(
         `Error handleFetchPosts - fetchSignedUrlsWithSigner local server connection error, check local server is running - ${error.stack}`
       );
     } else {
-      await logError(
+      logError(
         `Error handleFetchLeads / handleFetchPosts - fetchAllSignedURLsWithSigner ${error.stack}`
       );
     }
@@ -51,7 +51,7 @@ const fetchAllSignedURLs = async (URLsExclSig) => {
   try {
     signedURLs = await fetchAllSignedURLsWithSigner(URLsExclSig);
   } catch (error) {
-    await logError(
+    logError(
       `Error handleFetchLeads / handleFetchPosts - fetchAllSignedURLs closing signer ${error.stack}`
     );
   }

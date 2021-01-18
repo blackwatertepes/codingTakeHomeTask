@@ -27,14 +27,14 @@ const fetchWebUserTktkSigRaw = async (client, signedURL, retryCount = 0) => {
     // statusCode returns 404 on page error (e.g. faulty URL)
 
     if (data.statusCode !== 0 || data.statusCode === 10202) {
-      await logError(
+      logError(
         `handleFetchLeads - fetchWebUserTktkSigRaw, no data for ${signedURL}, statusCode: ${data.statusCode}`
       );
       return null;
     }
   } catch (error) {
     if (error.message.includes("tiktok.com/404")) {
-      await logError(
+      logError(
         `handleFetchLeads - fetchWebUserTktkSigRaw, 404 error for url ${signedURL}`
       );
       return null;
@@ -49,20 +49,20 @@ const fetchWebUserTktkSigRaw = async (client, signedURL, retryCount = 0) => {
         error.name === "RequestError") &&
       retryCount < MAX_RETRY_COUNT
     ) {
-      await logWarning(
+      logWarning(
         `handleRequestError - network error, url: ${signedURL}, ${error.stack}`
       );
       await wait(DELAY_NETWORK_ERROR_RETRY_MILLIS);
       return fetchWebUserTktkSigRaw(client, signedURL, retryCount + 1);
     }
 
-    await logError(
+    logError(
       `Error handleFetchLeads - fetchWebUserTktkSigRaw ${error.stack}`
     );
     return null;
   }
 
-  await logWarning(
+  logWarning(
     `handleFetchLeads - fetchWebUserTktkSigRaw, user does not exist for ${signedURL}`
   );
   return null;
@@ -79,18 +79,18 @@ const fetchWebUser = async (client, username) => {
     const signedURL = await fetchSignedURL(URLExclSig);
 
     if (!signedURL) {
-      await logError(
+      logError(
         `handleFetchLeads - fetchWebUser no signedURL, return null`
       );
       return null;
     }
 
-    await logInfo(`handleFetchLeads - fetchWebUser signed URL ${signedURL}`);
+    logInfo(`handleFetchLeads - fetchWebUser signed URL ${signedURL}`);
     const webTagInfoRaw = await fetchWebUserTktkSigRaw(client, signedURL);
 
     return webTagInfoRaw;
   } catch (error) {
-    await logError(`Error handleFetchLeads - fetchWebUser - ${error.stack}`);
+    logError(`Error handleFetchLeads - fetchWebUser - ${error.stack}`);
     return {};
   }
 };
