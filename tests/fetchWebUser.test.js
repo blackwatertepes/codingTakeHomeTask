@@ -1,22 +1,29 @@
-const fetch = require("node-fetch");
+const fetch = require("fetch-vcr");
 const { fetchWebUser } = require("../src/fetchWebUser");
+
+fetch.configure({
+  fixturePath: './tests/fixtures',
+  mode: 'cache' // playback, cache, record
+})
 
 const USERNAME = "andreswilley";
 const USERNAME_NON_EXISTENT = "ashdlkjfioebjkaewuhrlakwjhlarhaew";
 
-describe("TikTok API fetching as expected", () => {
-  beforeEach(() => {
-    jest.setTimeout(60000);
+describe("fetchWebUser", () => {
+  test("returns parsed user object", async () => {
+    const data = await fetchWebUser(fetch, USERNAME);
+    expect(data.user).toMatchObject({
+      id: "525985",
+      uniqueId: "andreswilley"
+    });
   });
 
-  // WEB - SIGNATURE
-  test("fetchWebUser", async () => {
+  test("returns parsed stats object", async () => {
     const data = await fetchWebUser(fetch, USERNAME);
-    expect(typeof data).toBe("object");
-    expect(data.user.id).toBe("525985");
-    expect(data.user.uniqueId).toBe("andreswilley");
     expect(data.stats.followerCount).toBeGreaterThan(5000000);
+  });
 
+  test("handles http response errors", async () => {
     const userNonExistent = await fetchWebUser(fetch, USERNAME_NON_EXISTENT);
     expect(userNonExistent).toBeFalsy();
   });
