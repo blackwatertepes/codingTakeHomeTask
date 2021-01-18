@@ -4,9 +4,12 @@ const { signUrl } = require("./signUrl");
 const { fetch } = require("./fetch");
 const { logInfo, logError, logWarning } = require("./log");
 
-const URL_EXCL_SIG = `https://www.tiktok.com/node/share/user/@USERNAME?user_agent=USER_AGENT&validUniqueId=USERNAME`;
 const WEB_USER_AGENT =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36";
+
+const urlExclSig = (username) => {
+  return `https://www.tiktok.com/node/share/user/@${encodeURIComponent(username)}?user_agent=${encodeURIComponent(WEB_USER_AGENT)}&validUniqueId=USERNAME`
+}
 
 const fetchWebUserTktkSigRaw = async (client, signedURL) => {
   const data = await fetch(client, signedURL);
@@ -34,12 +37,7 @@ const fetchWebUserTktkSigRaw = async (client, signedURL) => {
 
 const fetchWebUser = async (client, username) => {
   try {
-    const URLExclSig = URL_EXCL_SIG.replace(
-      /USERNAME/g,
-      encodeURIComponent(username)
-    ).replace("USER_AGENT", encodeURIComponent(WEB_USER_AGENT));
-
-    const signedURL = await signUrl(URLExclSig);
+    const signedURL = await signUrl(urlExclSig(username));
 
     if (!signedURL) {
       logError(

@@ -12,7 +12,7 @@ const signUrl = async (URLExclSig) => {
     return `${URLExclSig}&_signature=${signature}`;
   } catch (error) {
     logError(
-      `Error handleFetchLeads / handleFetchPosts - fetchUnsignedURLWithSigner ${error.stack}`
+      `Error handleFetchLeads / handleFetchPosts - signUrl ${error.stack}`
     );
     return "";
   }
