@@ -11,16 +11,13 @@ const WEB_USER_AGENT =
 
 const fetchWebUserTktkSigRaw = async (client, signedURL, retryCount = 0) => {
   try {
-    const response = await client.get({
-      uri: signedURL,
-      // so it resolves with full response not just body
-      resolveWithFullResponse: true,
+    const response = await client(signedURL, {
       headers: {
         "user-agent": WEB_USER_AGENT,
       },
     });
 
-    const data = JSON.parse(response.body);
+    const data = await response.json();
 
     if (data && data.userInfo && data.userInfo.user) return data.userInfo;
 
